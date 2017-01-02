@@ -177,31 +177,32 @@ class Game:
         return self.winner
 
 
-class StupidBot(Bot):
-    NAME = 'Глупый бот'
-    AUTHOR = 'Андрей Гейн'
-
-    def move(self, history):
-        return 1
-
-
-class StupidPrinterBot(StupidBot):
-    def move(self, history):
-        print('История из StupidPrinterBot:', history)
-        return 2
-
-
-class SlowBot(Bot):
-    NAME = 'Медленный бот'
-    AUTHOR = 'Андрей Гейн'
-
-    def move(self, history):
-        import time
-        time.sleep(5)
-
-
 if __name__ == '__main__':
     import sys
+
+
+    class StupidBot(Bot):
+        NAME = 'Глупый бот'
+        AUTHOR = 'Андрей Гейн'
+
+        def move(self, history):
+            return 1
+
+
+    class StupidPrinterBot(StupidBot):
+        def move(self, history):
+            print('История из StupidPrinterBot:', history)
+            return 2
+
+
+    class SlowBot(Bot):
+        NAME = 'Медленный бот'
+        AUTHOR = 'Андрей Гейн'
+
+        def move(self, history):
+            import time
+            time.sleep(5)
+
 
     logging.basicConfig(level=logging.DEBUG, stream=sys.stdout,
                         format='%(asctime)s [%(levelname)s] %(message)s')

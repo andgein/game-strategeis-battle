@@ -58,6 +58,11 @@ class Battle:
                 if player1_idx == player2_idx:
                     continue
 
+                logging.info('Играет %s против %s' % (
+                    player1.get_bot_name_and_author(),
+                    player2.get_bot_name_and_author()
+                ))
+
                 log_file_name = os.path.join(round_logs_folder, self._safe_filename('%s VS %s.log' % (
                     player1.get_bot_name_and_author(),
                     player2.get_bot_name_and_author()

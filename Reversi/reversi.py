@@ -319,38 +319,38 @@ class Game:
         return self.winner
 
 
-class StupidBot(Bot):
-    NAME = 'Глупый бот'
-    AUTHOR = 'Андрей Гейн'
-
-    def move(self, board):
-        return Move(2, 3)
-        for row in range(board.size):
-            for column in range(board.size):
-                if board[row][column] == BoardCell.EMPTY.value:
-                    return Move(row, column)
-
-
-class StupidPrinterBot(StupidBot):
-    def move(self, board):
-        for row in range(board.size):
-            for column in range(board.size):
-                if board[row][column] == self.player_type:
-                    print('Нашёл свою клетку: %d, %d' % (row, column))
-        return super().move(board)
-
-
-class SlowBot(Bot):
-    NAME = 'Медленный бот'
-    AUTHOR = 'Андрей Гейн'
-
-    def move(self, board):
-        import time
-        time.sleep(5)
-
-
 if __name__ == '__main__':
     import sys
+
+
+    class StupidBot(Bot):
+        NAME = 'Глупый бот'
+        AUTHOR = 'Андрей Гейн'
+
+        def move(self, board):
+            for row in range(board.size):
+                for column in range(board.size):
+                    if board[row][column] == BoardCell.EMPTY.value:
+                        return Move(row, column)
+
+
+    class StupidPrinterBot(StupidBot):
+        def move(self, board):
+            for row in range(board.size):
+                for column in range(board.size):
+                    if board[row][column] == self.player_type:
+                        print('Нашёл свою клетку: %d, %d' % (row, column))
+            return super().move(board)
+
+
+    class SlowBot(Bot):
+        NAME = 'Медленный бот'
+        AUTHOR = 'Андрей Гейн'
+
+        def move(self, board):
+            import time
+            time.sleep(5)
+
 
     logging.basicConfig(level=logging.DEBUG, stream=sys.stdout,
                         format='%(asctime)s [%(levelname)s] %(message)s')
