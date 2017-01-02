@@ -115,7 +115,7 @@ class Game:
                 player
             ))
             logging.info('Засчитываю автоматический проигрыш в раунде')
-            return -1
+            return 1000000000
 
         return move
 
