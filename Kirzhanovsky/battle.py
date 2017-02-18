@@ -11,6 +11,7 @@ import os
 import os.path
 import importlib.util
 import datetime
+import gc
 
 from kirzhanovsky import Game, Bot
 
@@ -30,7 +31,8 @@ class Battle:
     def _play_game(self):
         game = Game(self.players)
         game.play()
-        self.scores[game.winner] += 1
+        for player_id, player_score in enumerate(game.scores):
+            self.scores[player_id] += player_score
 
     def play_round(self):
         self.round_number += 1
@@ -41,6 +43,7 @@ class Battle:
         logging.basicConfig(level=logging.INFO, filename=log_file_name,
                             format='%(asctime)s [%(levelname)s] %(message)s')
         self._play_game()
+        gc.collect()
 
         clear_logging_root_handlers()
         logging.basicConfig(level=logging.INFO, stream=sys.stdout,

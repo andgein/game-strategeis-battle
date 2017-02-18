@@ -176,6 +176,9 @@ class Move(collections.namedtuple('Move', ('row', 'column'))):
     pass
 
 
+game_thread_pool = multiprocessing.pool.ThreadPool(processes=1)
+
+
 class Game:
     INCORRECT_MOVE_TRIES_LIMIT = 5
     BOT_MOVE_TIMEOUT = 3  # в секундах
@@ -189,10 +192,10 @@ class Game:
     def _safe_run(timeout, function, args, kwargs):
         """ Запускает функцию function с таймаутом на выполнение """
         try:
-            pool = multiprocessing.pool.ThreadPool(processes=1)
-            async_result = pool.apply_async(function, args, kwargs)
+            async_result = game_thread_pool.apply_async(function, args, kwargs)
             # Кидает исключение TimeoutError если исполнение превысило timeout секунд
             return async_result.get(timeout)
+            ## return function(*args, **kwargs)
         except multiprocessing.context.TimeoutError:
             logging.info('Превышено время ожидания ответа: %d секунд' % (timeout,))
             return None

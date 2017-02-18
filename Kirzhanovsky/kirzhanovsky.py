@@ -58,6 +58,9 @@ class IncorrectMove(Exception):
     pass
 
 
+game_thread_pool = multiprocessing.pool.ThreadPool(processes=1)
+
+
 class Game:
     INCORRECT_MOVE_TRIES_LIMIT = 5
     BOT_MOVE_TIMEOUT = 3  # в секундах
@@ -71,8 +74,7 @@ class Game:
     def _safe_run(timeout, function, args, kwargs):
         """ Запускает функцию function с таймаутом на выполнение """
         try:
-            pool = multiprocessing.pool.ThreadPool(processes=1)
-            async_result = pool.apply_async(function, args, kwargs)
+            async_result = game_thread_pool.apply_async(function, args, kwargs)
             # Кидает исключение TimeoutError если исполнение превысило timeout секунд
             return async_result.get(timeout)
         except multiprocessing.context.TimeoutError:
@@ -91,7 +93,7 @@ class Game:
                 history_copy = copy.deepcopy(self.history)
                 try:
                     move = self._safe_run(timeout, player.move, (history_copy,), {})
-                    logging.info('Ход игрока %s: %d' % (str(player), move))
+                    logging.info('Ход игрока %s: %s' % (str(player), str(move)))
                     if move < 1 or move > len(self.players):
                         raise IncorrectMove('неправильное значение. Должно быть число от 1 до %d' % (len(self.players), ))
                 except Exception as e:
@@ -115,7 +117,7 @@ class Game:
                 player
             ))
             logging.info('Засчитываю автоматический проигрыш в раунде')
-            return 1000000000
+            return -1
 
         return move
 
@@ -129,6 +131,7 @@ class Game:
         self.history = []
         self.move_number = 0
         self.winner = None
+        self.scores = [0] * len(self.players)
 
     def _is_game_finished(self):
         return self.move_number == self.ROUNDS_IN_GAME
@@ -146,6 +149,8 @@ class Game:
         for round_id, round in enumerate(self.history):
             counts = {x: round.count(x) for x in set(round)}
             for player_id, player_move in sorted(enumerate(round), key=operator.itemgetter(1)):
+                if player_move == -1:
+                    continue
                 if counts[player_move] == 1:
                     logging.info('В раунде %d победил игрок %s и получил %d очков' % (
                         round_id + 1,
@@ -162,6 +167,7 @@ class Game:
             return False
 
         self.winner = best_players[0]
+        self.scores = scores
         return True
 
     def play(self):

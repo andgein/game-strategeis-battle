@@ -11,6 +11,7 @@ import os
 import os.path
 import importlib.util
 import datetime
+import gc
 
 from tictactoe import Game, Bot, Winner
 
@@ -71,10 +72,11 @@ class Battle:
                 logging.basicConfig(level=logging.INFO, filename=log_file_name,
                                     format='%(asctime)s [%(levelname)s] %(message)s')
                 self._play_game(player1_idx, player2_idx)
+                gc.collect()
 
-        clear_logging_root_handlers()
-        logging.basicConfig(level=logging.INFO, stream=sys.stdout,
-                            format='%(asctime)s [%(levelname)s] %(message)s')
+                clear_logging_root_handlers()
+                logging.basicConfig(level=logging.INFO, stream=sys.stdout,
+                                    format='%(asctime)s [%(levelname)s] %(message)s')
 
     def fight(self, rounds):
         logging.info('Логи баттла хранятся в папке %s' % (self.logs_folder, ))
